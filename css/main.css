@@ -1,0 +1,86 @@
+body {
+  font-family: "Helvetica Neue", Helvetica, arial, sans-serif;
+  font-size: 18px;
+  line-height: 1.4em;
+}
+
+* {
+          box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+}
+
+h1, h2, h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  margin: 0 0 1rem 0;
+}
+
+#types,
+#types .type {
+  list-style: none;
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+  #types {
+    margin-bottom: 1rem;
+  }
+
+  #types .type {
+    background: #ddd;
+    display: inline-block;
+    padding: .2rem .5rem;
+    margin: 0 1px 1px 0;
+  }
+
+    #types .type a {
+      color: #000;
+    }
+
+    #types .type.selected a {
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+#domains {
+  position: relative;
+}
+
+  #domains .domain {
+    float: left;
+    margin: 0 1rem 1rem 0;
+    background: #f9f9f9;
+    padding: 1em;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+    #domains .domain img {
+      max-width: 100%;
+    }
+
+    #domains .domain .title {
+      font-family: Monaco, "Courier New", monospace;
+    }
+
+      #domains .domain .title a {
+        text-decoration: none;
+      }
+
+  #domains .domain .meta {
+    margin-bottom: 1rem;
+  }
+
+    #domains .domain .meta h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: normal;
+    }
+
+  #domains:after {
+    display: block;
+    content: " ";
+    height: 0;
+    clear: both;
+  }

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>.gov screenshots</title>
+    <script src="js/vendor/d3.v3.min.js"></script>
+    <script src="js/vendor/queue.v1.min.js"></script>
+    <link rel="stylesheet" href="css/main.css">
+  </head>
+  <body>
+    <h1>.gov screenshots</h1>
+    <div id="loading">
+      Loading...
+    </div>
+    <ul id="types">
+    </ul>
+    <div id="domains">
+    </div>
+  </body>
+  <script>
+    var filter = location.search
+      ? unescape(location.search.substr(1).replace(/\+/g, " "))
+      : "";
+
+    var loading = d3.select("#loading");
+
+    d3.csv("domains.csv", function(error, domains) {
+      loading.remove();
+
+      // alias domain property
+      domains.forEach(function(d) {
+        d.domain = d["Domain Name"];
+      });
+
+      var commaFormat = d3.format(",");
+
+      var types = d3.nest()
+        .key(function(d) { return d["Domain Type"]; })
+        .entries(domains)
+        .sort(function(a, b) {
+          return d3.ascending(a.key, b.key);
+        });
+
+      types.unshift({
+        label: "All types",
+        key: "",
+        values: domains.slice()
+      });
+
+      d3.select("#types")
+        .selectAll(".type")
+        .data(types)
+        .enter()
+        .append("li")
+          .attr("class", "type")
+          .classed("selected", function(d) {
+            return filter == d.key;
+          })
+          .append("a")
+            .attr("href", function(d) {
+              return "?" + escape(d.key);
+            })
+            .text(function(d) {
+              return (d.label || d.key) +
+                " (" + commaFormat(d.values.length) + ")";
+            });
+
+      if (filter) {
+        domains = domains.filter(function(d) {
+          console.log(d["Domain Type"]);
+          return d["Domain Type"] == filter;
+        });
+      }
+
+      var div = d3.select("#domains")
+        .selectAll(".domain")
+        .data(domains)
+        .enter()
+        .append("div")
+          .attr("class", "domain")
+          .attr("id", function(d) { return d.domain; });
+
+      div.append("h2")
+        .attr("class", "title")
+        .append("a")
+          .attr("href", function(d) { return "http://" + d.domain.toLowerCase(); })
+          .text(function(d) { return d.domain.toLowerCase(); });
+
+      var meta = div.append("div")
+        .attr("class", "meta");
+
+      if (!filter) {
+        meta.append("h3")
+          .attr("class", "domain-type")
+          .text(function(d) { return d["Domain Type"]; });
+      }
+
+      meta.append("h3")
+        .attr("class", "agency")
+        .text(function(d) { return d["Agency"]; });
+      meta.append("h3")
+        .attr("class", "location")
+        .text(function(d) {
+          return [d.City, d.State].join(", ");
+        });
+
+      var link = div.append("a")
+        .attr("href", function(d) {
+          return "screenshots/" + d.domain + "-full.png";
+        });
+
+      var q = queue();
+
+      var thumb = link.append("img")
+        .each(function(d) {
+          var src = "screenshots/" + d.domain + "-thumb.png";
+          q.defer(loadImage, src, this);
+        });
+
+      q.awaitAll(function(error, images) {
+        console.log("all done loading!", images.length);
+      });
+
+      function loadImage(src, image, callback) {
+        image.classList.add("loading");
+        image.onerror = function() {
+          image.classList.remove("loading");
+          image.classList.add("error");
+          callback(null, {image: image, loaded: false});
+        };
+        image.onload = function() {
+          image.classList.remove("loading");
+          image.classList.add("loaded");
+          callback(null, {image: image, loaded: true});
+        };
+        image.src = src;
+      }
+    });
+  </script>
+</html>
