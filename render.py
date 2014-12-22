@@ -31,7 +31,7 @@ for row in csv.DictReader(stream, dialect="excel"):
     outfile = os.path.join(outdir, "%s-full.png" % domain)
 
     if os.path.exists(outfile):
-        print "skipping: %s", outfile
+        print "skipping: %s" % outfile
         continue
 
     print "rendering: %s" % outfile
