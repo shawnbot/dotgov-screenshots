@@ -41,12 +41,14 @@ parser.add_argument("--output", "-o", dest="output",
     help="the filename of the CSV output")
 parser.add_argument("--full", "-F", dest="fullpage",
     action="store_true",
+    default=None,
     help="capture the full page height (default: only capture the viewport)")
 parser.add_argument("--thumb", "-t", dest="thumb",
     type=int,
     help="the max thumbnail width, in pixels")
 parser.add_argument("--wait", "-w", dest="wait",
     action="store_true",
+    default=None,
     help="wait for the document to be fully loaded (?) before taking a screenshot")
 parser.add_argument("--ttl", dest="ttl",
     type=int,
@@ -54,8 +56,6 @@ parser.add_argument("--ttl", dest="ttl",
 args = parser.parse_args()
 
 if not args.api_key or not args.api_secret:
-    print >> sys.stderr, """
-    """
     parser.print_help()
     sys.exit(1)
 

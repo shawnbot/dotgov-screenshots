@@ -91,10 +91,10 @@ class API(object):
             get = lambda k: getattr(args, k)
         trans = (
             ("size", "viewport", str),
-            ("full", "fullpage", lambda b: str(b).lower()),
+            ("full", "fullpage", lambda b: bool(b) and "true" or None),
             ("thumb", "thumbnail_max_width", str),
             ("unique", "unique", str),
-            ("wait", "say_cheese", lambda x: "true"),
+            ("wait", "say_cheese", lambda x: x and "true" or None),
             ("ttl", "ttl", str)
         )
         params = {}
