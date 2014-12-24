@@ -1,0 +1,3 @@
+organ==0.4.3
+selenium==2.44.0
+unicodecsv==0.9.4
