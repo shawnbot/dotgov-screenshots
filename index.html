@@ -40,11 +40,13 @@
           return d3.ascending(a.key, b.key);
         });
 
-      types.unshift({
-        label: "All types",
-        key: "",
-        values: domains.slice()
-      });
+      if (types.length > 1) {
+        types.unshift({
+          label: "All types",
+          key: "",
+          values: domains.slice()
+        });
+      }
 
       d3.select("#types")
         .selectAll(".type")
@@ -52,9 +54,11 @@
         .enter()
         .append("li")
           .attr("class", "type")
-          .classed("selected", function(d) {
-            return filter == d.key;
-          })
+          .classed("selected", (types.length > 1)
+            ? function(d) {
+              return filter == d.key;
+              }
+            : true)
           .append("a")
             .attr("href", function(d) {
               return "?" + escape(d.key);
