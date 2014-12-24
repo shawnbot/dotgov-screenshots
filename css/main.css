@@ -57,7 +57,7 @@ h1, h2, h3 {
   }
 
     #domains .domain img {
-      max-width: 100%;
+      width: 400px;
     }
 
     #domains .domain .title {
