@@ -65,19 +65,13 @@ api = url2png.API(key=args.api_key, secret=args.api_secret)
 params = api.make_params(args)
 
 print >> sys.stderr, "request parameters: %s" % params
-# sys.exit(1)
 
 csv_in = args.INPUT
 reader = csv.DictReader(csv_in)
 writer = None
 csv_out = args.output
 
-outdir = args.outdir
-if outdir and not os.path.exists(outdir):
-    print >> sys.stderr, "+ making outdir: %s" % outdir
-    os.makedirs(outdir)
-elif not outdir:
-    outdir = "."
+outdir = (args.outdir and args.outdir or ".")
 
 try:
     for row in reader:
