@@ -58,6 +58,8 @@ for row in csv.DictReader(stream, dialect="excel"):
     if returncode == 1 or not os.path.exists(outfile):
         print "*** failed to render: %s" % outfile
         os.symlink(missing, outfile)
-        os.symlink(*map(lambda f: f.replace("-full", "-%s" % thumb_type), (missing, outfile)))
+        for infile, outfile in map(lambda f: f.replace("-full", "-%s" % thumb_type), (missing, outfile)):
+            if not os.path.exists(outfile):
+                os.symlink(infile, outfile)
 
 stream.close()
