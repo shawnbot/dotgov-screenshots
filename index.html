@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <title>.gov screenshots</title>
     <script src="js/vendor/d3.v3.min.js"></script>
-    <script src="js/vendor/queue.v1.min.js"></script>
     <link rel="stylesheet" href="css/main.css">
   </head>
   <body>
@@ -24,7 +23,7 @@
 
     var loading = d3.select("#loading");
 
-    d3.csv("domains.csv", function(error, domains) {
+    d3.csv("screenshots/status.csv", function(error, domains) {
       loading.remove();
 
       // alias domain property
@@ -78,13 +77,19 @@
         .enter()
         .append("div")
           .attr("class", "domain")
-          .attr("id", function(d) { return d.domain; });
+          .attr("id", function(d) {
+            return d.domain;
+            });
 
       div.append("h2")
         .attr("class", "title")
         .append("a")
-          .attr("href", function(d) { return "http://" + d.domain.toLowerCase(); })
-          .text(function(d) { return d.domain.toLowerCase(); });
+          .attr("href", function(d) {
+            return "http://" + d.domain.toLowerCase();
+          })
+          .text(function(d) {
+            return d.domain.toLowerCase();
+            });
 
       var meta = div.append("div")
         .attr("class", "meta");
@@ -105,36 +110,17 @@
         });
 
       var link = div.append("a")
+        .attr("class", "image")
         .attr("href", function(d) {
-          return "screenshots/" + d.domain + "-full.png";
-        });
-
-      var q = queue();
-
-      var thumb = link.append("img")
-        .each(function(d) {
-          var src = "screenshots/" + d.domain + "-thumb.png";
-          q.defer(loadImage, src, this);
-        });
-
-      q.awaitAll(function(error, images) {
-        console.log("all done loading!", images.length);
-      });
-
-      function loadImage(src, image, callback) {
-        image.classList.add("loading");
-        image.onerror = function() {
-          image.classList.remove("loading");
-          image.classList.add("error");
-          callback(null, {image: image, loaded: false});
-        };
-        image.onload = function() {
-          image.classList.remove("loading");
-          image.classList.add("loaded");
-          callback(null, {image: image, loaded: true});
-        };
-        image.src = src;
-      }
+          return d.image;
+        })
+        .append("img")
+          .on("error", function(d) {
+            this.src = "meta/missing-thumb.png";
+          })
+          .attr("src", function(d) {
+            return d.image;
+          });
     });
   </script>
 </html>
