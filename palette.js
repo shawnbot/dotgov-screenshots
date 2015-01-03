@@ -12,7 +12,13 @@ var fs = require("fs"),
 var COLORS = 5,
     CSV_FILENAME = "domains.csv",
     COMMAND = "convert",
-    ARGS = ["-resize", "600x600>", "-colors", COLORS, "-unique-colors", "-scale", "1000%"],
+    ARGS = [
+      "-resize", "600x600>",
+      "-colors", COLORS, "-unique-colors",
+      "-scale", "1000%",
+      "-interpolate", "Nearest",
+      "-interpolative-resize", "500x100!"
+    ],
     SUFFIX = "-palette";
 
 var reader = csv.parse({headers: true}),
