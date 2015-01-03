@@ -18,17 +18,13 @@ var CSV_URL = "https://gsa.github.io/data/dotgov-domains/2014-12-01-full.csv",
     MAX_PARALLEL = 5;
 
 // CSV reader, writer, and Pageres instance
-var reader = csv.parse({
-      headers: true
-    }),
+var reader = csv.parse({headers: true}),
     input = request(CSV_URL)
       .pipe(reader)
       .on("data", add)
       .on("end", end),
     output = fs.createWriteStream("domains.csv"),
-    writer = csv.createWriteStream({
-        headers: true
-      }),
+    writer = csv.createWriteStream({headers: true}),
     tasks = [],
     errors = 0;
 
@@ -89,6 +85,7 @@ function end() {
         fs.unlink(task.image, function() {
           console.log("(x) no image saved for %s (unlinked %s)", task.domain, task.image);
           task.error = "no image written";
+          errors++;
           return next(null, task);
         });
       }
@@ -98,6 +95,7 @@ function end() {
     }
   }, function(error, results) {
     console.log("... processed %d tasks with %d errors", results.length, errors);
+    writer.end();
   });
 }
 
