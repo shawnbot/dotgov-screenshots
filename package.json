@@ -4,7 +4,8 @@
   "description": "take screenshots of .gov websites",
   "main": "index.js",
   "scripts": {
-    "capture": "time ./index.js"
+    "capture": "time ./index.js",
+    "start": "http-server ."
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   "dependencies": {
     "async": "^0.9.0",
     "fast-csv": "^0.5.4",
+    "http-server": "^0.7.4",
     "request": "^2.51.0",
     "screenshot-stream": "^1.2.0"
   }
