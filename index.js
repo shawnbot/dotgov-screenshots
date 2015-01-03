@@ -4,59 +4,91 @@
 // imports
 var fs = require("fs"),
     path = require("path"),
+    async = require("async"),
     request = require("request"),
     csv = require("fast-csv"),
-    Pageres = require("pageres");
+    screenshot = require("screenshot-stream");
 
 // inputs
 var CSV_URL = "https://gsa.github.io/data/dotgov-domains/2014-12-01-full.csv",
     DOMAIN_COLUMN = "Domain Name",
-    SIZES = ["1280x960"],
-    OUTDIR = "screenshots";
+    SIZE = "1280x960",
+    OPTIONS = {delay: .01},
+    OUTDIR = "screenshots",
+    MAX_PARALLEL = 5;
 
 // CSV reader, writer, and Pageres instance
 var reader = csv.parse({
       headers: true
     }),
-    writer = csv.createWriteStream({
-      headers: true
-    }),
-    pager = new Pageres({
-        delay: .01,
-        filename: "<%= url %>"
-      })
-      .dest(".")
-      .on("warn", warn),
+    input = request(CSV_URL)
+      .pipe(reader)
+      .on("data", add)
+      .on("end", end),
     output = fs.createWriteStream("domains.csv"),
-    capturing = 0;
+    writer = csv.createWriteStream({
+        headers: true
+      }),
+    tasks = [],
+    errors = 0;
 
 writer.pipe(output);
 
-request(CSV_URL)
-  .pipe(reader)
-  .on("data", add)
-  .on("end", end);
-
-function warn(warning) {
-  console.warn("*", warning);
+function filter(row) {
+  return row["Domain Type"] === "Federal Agency";
 }
 
 function add(row) {
   var domain = row[DOMAIN_COLUMN].toLowerCase(),
-      filename = path.join(OUTDIR, domain);
+      image = path.join(OUTDIR, domain) + ".png";
+  row.url = "http://" + domain;
   row.domain = domain; // normalized
-  row.image = filename; // relative path to the image
-  writer.write(row);
-
-  pager.src(domain, SIZES, {filename: filename});
-  capturing++;
+  row.image = image;
+  if (filter(row)) {
+    tasks.push(row);
+  }
 }
 
 function end() {
-  writer.end();
-  console.log("capturing %d rows...", capturing);
-  pager.run(function(error) {
-    if (error) return console.error("error:", error);
-    console.log("done!");
+  console.log("capturing %d domains...", tasks.length);
+  async.mapLimit(tasks, MAX_PARALLEL, function(task, next) {
+    var written = false;
+    if (fs.existsSync(task.image) && fs.statSync(task.image).size > 0) {
+      written = true;
+      return done();
+    }
+
+    var image = fs.createWriteStream(task.image),
+        shot = screenshot(task.url, SIZE, OPTIONS)
+          .on("warn", function(warning) {
+            // console.warn("warning:", warning);
+          })
+          .on("error", function(error) {
+            console.error("(x) error with %s: '%s'", task.domain, error);
+            task.error = error;
+            errors++;
+            next(null, task);
+          })
+          .on("data", function() {
+            written = true;
+          })
+          .on("end", done)
+          .on("close", done)
+          .pipe(image);
+
+    function done() {
+      if (!written) {
+        fs.unlink(task.image, function() {
+          console.log("(x) no image saved for %s (unlinked %s)", task.domain, task.image);
+          task.error = "no image written";
+          return next(null, task);
+        });
+      }
+      console.log("(✓) done: %s", task.domain);
+      writer.write(task);
+      next(null, task);
+    }
+  }, function(error, results) {
+    console.log("... processed %d tasks with %d errors", results.length, errors);
   });
 }
