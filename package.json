@@ -1,0 +1,30 @@
+{
+  "name": "dotgov-screenshots",
+  "version": "1.0.0",
+  "description": "take screenshots of .gov websites",
+  "main": "index.js",
+  "scripts": {
+    "capture": "time ./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shawnbot/dotgov-screenshots.git"
+  },
+  "keywords": [
+    "screenshots",
+    "dot-gov"
+  ],
+  "author": "Shawn Allen <shawn.allen@gsa.gov>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shawnbot/dotgov-screenshots/issues"
+  },
+  "homepage": "https://github.com/shawnbot/dotgov-screenshots",
+  "devDependencies": {
+  },
+  "dependencies": {
+    "fast-csv": "^0.5.4",
+    "pageres": "^1.1.0",
+    "request": "^2.51.0"
+  }
+}
