@@ -2,9 +2,11 @@
   "name": "dotgov-screenshots",
   "version": "1.0.0",
   "description": "take screenshots of .gov websites",
-  "main": "index.js",
+  "main": "capture.js",
   "scripts": {
-    "capture": "time ./index.js",
+    "capture": "time node capture.js",
+    "palette": "time node palette.js",
+    "clean": "rm -f screenshots/*.png",
     "start": "http-server ."
   },
   "repository": {
