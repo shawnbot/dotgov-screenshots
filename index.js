@@ -54,6 +54,11 @@ function add(row) {
 
 function end() {
   console.log("capturing %d domains...", tasks.length);
+  // sort tasks by domain ascending
+  tasks.sort(function(a, b) {
+    return ascending(a.domain, b.domain);
+  });
+
   async.mapLimit(tasks, MAX_PARALLEL, function(task, next) {
     var written = false;
     if (fs.existsSync(task.image) && fs.statSync(task.image).size > 0) {
@@ -94,4 +99,8 @@ function end() {
   }, function(error, results) {
     console.log("... processed %d tasks with %d errors", results.length, errors);
   });
+}
+
+function ascending(a, b) {
+  return a > b ? 1 : a < b ? -1 : 0;
 }
