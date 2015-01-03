@@ -115,7 +115,7 @@
         })
         .append("img")
           .on("error", function(d) {
-            this.src = "meta/missing-thumb.png";
+            this.outerHTML = "<i>missing</i>";
           })
           .attr("src", function(d) {
             return d.image;
