@@ -108,6 +108,12 @@
           return [d.City, d.State].join(", ");
         });
 
+      var palette = div.append("img")
+        .attr("class", "palette")
+        .attr("src", function(d) {
+          return d.image.replace(/(\.png)$/, "-palette$1");
+        });
+
       var link = div.append("a")
         .attr("class", "image")
         .attr("href", function(d) {
