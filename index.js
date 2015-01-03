@@ -34,6 +34,9 @@ var reader = csv.parse({
 
 writer.pipe(output);
 
+/*
+ * XXX remove me
+ */
 function filter(row) {
   return row["Domain Type"] === "Federal Agency";
 }
