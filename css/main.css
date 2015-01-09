@@ -57,6 +57,16 @@ h1, h2, h3 {
   }
 
     #domains .domain img {
+      display: block;
+      width: 400px;
+    }
+
+    #domains .domain img.palette {
+      height: 50px;
+      margin-bottom: .5rem;
+    }
+
+    #domains .domain a.image img {
       width: 400px;
     }
 

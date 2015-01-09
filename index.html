@@ -23,13 +23,8 @@
 
     var loading = d3.select("#loading");
 
-    d3.csv("screenshots/status.csv", function(error, domains) {
+    d3.csv("domains.csv", function(error, domains) {
       loading.remove();
-
-      // alias domain property
-      domains.forEach(function(d) {
-        d.domain = d["Domain Name"];
-      });
 
       var commaFormat = d3.format(",");
 
@@ -82,18 +77,18 @@
         .append("div")
           .attr("class", "domain")
           .attr("id", function(d) {
-            return d.domain;
+              return d.domain;
             });
 
       div.append("h2")
         .attr("class", "title")
         .append("a")
           .attr("href", function(d) {
-            return "http://" + d.domain.toLowerCase();
+            return "http://" + d.domain;
           })
           .text(function(d) {
-            return d.domain.toLowerCase();
-            });
+            return d.domain;
+          });
 
       var meta = div.append("div")
         .attr("class", "meta");
@@ -113,6 +108,12 @@
           return [d.City, d.State].join(", ");
         });
 
+      var palette = div.append("img")
+        .attr("class", "palette")
+        .attr("src", function(d) {
+          return d.image.replace(/(\.png)$/, "-palette$1");
+        });
+
       var link = div.append("a")
         .attr("class", "image")
         .attr("href", function(d) {
@@ -120,7 +121,7 @@
         })
         .append("img")
           .on("error", function(d) {
-            this.src = "meta/missing-thumb.png";
+            this.outerHTML = "<i>missing</i>";
           })
           .attr("src", function(d) {
             return d.image;
